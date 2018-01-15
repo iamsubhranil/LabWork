@@ -2,93 +2,94 @@
 #include <math.h>
 #include <stdio.h>
 
-#define ELEVEN(val, str) if(a == val){ \
-							printf(str); \
-						}
+const char *f[] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+const char *c[] = {"twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+const char *e[] = {"ten", "eleven", "twelve", "thirteen", "forteen", "fifteen", "sixteen", "seventeen",
+    "eighteen", "nineteen"};
+const char *d[] = {"hundred", "thousand", "lakh", "crore"};
+
+#define dbg(val) printf("\n<in %s, %s:%d> " #val " : %ld\n", __func__, __FILE__, __LINE__, val)
+
+static void twodig(long int val){
+#ifdef DEBUG
+    dbg(val);
+#endif
+    long int rem = val / 10;
+    if(rem > 0){
+        if(rem == 1){
+            printf("%s", e[val - 10]);
+            return;
+        }
+        else
+            printf("%s", c[rem - 2]);
+        if(val % 10 == 0)
+            return;
+        printf(" ");
+    }
+
+    printf("%s", f[val % 10]);
+}
+
+static void num_to_word(long int num){
+    if(num > 9999999){
+        num_to_word(num / 10000000);
+        printf(" crore ");
+        num = num % 10000000;
+    }
+    
+    long int t = num;
+    int count = 0;
+
+    while(t > 0){
+        t /= 10;
+        count++;
+    }
+    
+    t = num;
+    long int hp = 0;
+    if(count < 3){
+        twodig(t);
+        return;
+    }
+    else if(count == 3 || count % 2 == 0)
+        hp = pow(10, count - 1);
+    else
+        hp = pow(10, count - 2);
+    long int pos = count;
+    t = num;
+
+    long int dig;
+    while(t > 0){
+#ifdef DEBUG
+        dbg(hp);
+        dbg(t);
+        dbg(t / hp);
+#endif
+        dig = t / hp;
+        twodig(dig);
+#ifdef DEBUG
+        dbg(pos);
+#endif
+        if(pos > 2){
+             printf(" %s ", d[pos / 2 - 1]);
+        }
+
+        t = t % hp;
+        hp /= (pos == 4 || pos == 5) ? 10 : 100;       
+        pos -= (pos % 2 == 0) ? 1 : 2;
+    }
+}
 
 int main(){
-	char *f[] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
-	char *c[] = {"ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
-	char *e[] = {"eleven", "twelve", "thirteen", "forteen", "fifteen", "sixteen", "seventeen",
-				"eighteen", "nineteen"};
-	char *d[] = {"hundred", "thousand", "lakh", "crore"};
-	int b1, d1, e1, f1, c1 = 0;
-	long int a, t, t1;
-	
-	printf("\nEnter the number : ");
-	scanf("%ld", &a);
-	t = a;
-	int pos = 0;
-	while(t > 0){
-		b1 = t % 100;
-		if(b1 > 10 && b1 < 20){
-			b1 -= 11;
-			printf("%s ", e[b1]);
-		}
-		else{
-			d1 = b1 / 10;
-			printf("%s ", c[d1 - 1]);
-			d1 = b1 % 10;
-			if(d1 > 0){
-				printf("%s ", f[d1]);
-			}
-		}
+    long int a;
 
-		if(pos > 0){
-			printf("%s", d[(pos / 2) - 1]);
-		}
-		pos += 2;
-		t = t/100;
-	}
-	/*if(c1 == 1){
-		printf("%s", f[a]);
-	}
-	else if(c1 == 2){
-		ELEVEN(11, "eleven")
-		else ELEVEN(12, "twelve")
-		else ELEVEN(13, "thirteen")
-		else ELEVEN(14, "forteen")
-		else ELEVEN(15, "fifteen")
-		else ELEVEN(16, "sixteen")
-		else ELEVEN(17, "seventeen")
-		else ELEVEN(18, "eighteen")
-		else ELEVEN(19, "nineteen")
-		else{
-			t = a;
-			b1 = t % 10;
-			t = t / 10;
-			if(b1 != 0){
-				printf("%s %s", c[t - 1], f[b1]);
-			}
-			else
-				printf("%s", c[t - 1]);
-		}
-	}
-	else if(c1 == 3){
-		t = a;
-		t = t / 100;
-		printf("%s ", d[t - 1]);
-		a = a % 100;
-		ELEVEN(11, "eleven")
-		else ELEVEN(12, "twelve")
-		else ELEVEN(13, "thirteen")
-		else ELEVEN(14, "forteen")
-		else ELEVEN(15, "fifteen")
-		else ELEVEN(16, "sixteen")
-		else ELEVEN(17, "seventeen")
-		else ELEVEN(18, "eighteen")
-		else ELEVEN(19, "nineteen")
-		else{
-			t = a;
-			b1 = t % 10;
-			t = t / 10;
-			if(b1 != 0){
-				printf("%s %s", c[t - 1], f[b1]);
-			}
-			else
-				printf("%s", c[t - 1]);
-		}
-	}*/
-	printf("\n");
-	return 0;
+    printf("\nEnter the number : ");
+    scanf("%ld", &a);
+    if(a < 0){
+        printf("minus ");
+        a *= -1;
+    }
+    num_to_word(a);
+    printf("\n");
+    return 0;
 }
