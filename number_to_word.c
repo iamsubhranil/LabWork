@@ -7,12 +7,12 @@
 						}
 
 int main(){
-	char *f[] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
-	char *c[] = {"ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
-	char *d[] = {"one hundred", "two hundred", "three hundred", "four hundred", "five hundred",
+	const char *f[] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+	const char *c[] = {"ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+	const char *d[] = {"one hundred", "two hundred", "three hundred", "four hundred", "five hundred",
 				"six hundred", "seven hundred", "eight hundred", "nine hundred"};
-	int b1, d1, e1, f1, c1 = 0;
-	long int a, t, t1;
+	int b1,  c1 = 0;
+	long int a, t;
 	
 	printf("\nEnter the number : ");
 	scanf("%ld", &a);
