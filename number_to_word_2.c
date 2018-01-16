@@ -9,12 +9,13 @@ const char *e[] = {"ten", "eleven", "twelve", "thirteen", "forteen", "fifteen", 
 const char *d[] = {"hundred", "thousand", "lakh", "crore"};
 
 #define dbg(val) printf("\n<in %s, %s:%d> " #val " : %ld\n", __func__, __FILE__, __LINE__, val)
+#define dbgf(val) printf("\n<in %s, %s:%d> " #val " : %Lf\n", __func__, __FILE__, __LINE__, val)
 
-static void twodig(long int val){
+static void twodig(int val){
 #ifdef DEBUG
     dbg(val);
 #endif
-    long int rem = val / 10;
+    int rem = val / 10;
     if(rem > 0){
         if(rem == 1){
             printf("%s", e[val - 10]);
@@ -30,17 +31,17 @@ static void twodig(long int val){
     printf("%s", f[val % 10]);
 }
 
-static void num_to_word(long int num){
+static void num_to_word(long double num){
     if(num > 9999999){
         num_to_word(num / 10000000);
         printf(" crore ");
-        num = num % 10000000;
+        num = fmodl(num, 10000000);
     }
     
-    long int t = num;
+    long double t = num;
     int count = 0;
 
-    while(t > 0){
+    while(floorl(t) > 0){
         t /= 10;
         count++;
     }
@@ -59,7 +60,7 @@ static void num_to_word(long int num){
     t = num;
 
     long int dig;
-    while(t > 0){
+    while(floorl(t) > 0){
 #ifdef DEBUG
         dbg(hp);
         dbg(t);
@@ -74,22 +75,23 @@ static void num_to_word(long int num){
              printf(" %s ", d[pos / 2 - 1]);
         }
 
-        t = t % hp;
+        t = fmodl(t, hp);
         hp /= (pos == 4 || pos == 5) ? 10 : 100;       
         pos -= (pos % 2 == 0) ? 1 : 2;
     }
 }
 
 int main(){
-    long int a;
+    double long a, intpart, frac;
 
     printf("\nEnter the number : ");
-    scanf("%ld", &a);
+    scanf("%Lf", &a);
     if(a < 0){
         printf("minus ");
-        a *= -1;
+        a = fabsl(a);
     }
-    num_to_word(a);
+    frac = modfl(a, &intpart);
+    num_to_word(intpart);
     printf("\n");
     return 0;
 }
